@@ -12,11 +12,24 @@
       
       var texture = PIXI.Texture.fromImage('sw-flame-orange.png');
 
+      var rt = PIXI.RenderTexture.create(800,600);
+      var poostProcessSprite = new PIXI.Sprite(rt);
+
+      var filter;
+      app.stop();
+      PIXI.loader.add("shader", "shader.frag").load(function(loader, res){
+        filter = new PIXI.Filter(null, res.shader.data);
+        poostProcessSprite.filters = [filter];
+
+        app.start();
+      });
+
       var score = 0;
       var scoreText = new PIXI.Text("Score: 0", { fontFamily: "Arial", fontSize: 24, fill: 0x000000, align: "left"});
 
       var containerRoot = new PIXI.Container();
       app.stage.addChild(containerRoot);
+      app.stage.addChild(poostProcessSprite);
       var container = new PIXI.Container();
       containerRoot.addChild(container);
       containerRoot.addChild(scoreText);
@@ -47,6 +60,7 @@
             container.removeChildAt(i);
           }
         }
+        app.renderer.render(containerRoot, rt);
       });
 
       function addDrop(){
