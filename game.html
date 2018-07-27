@@ -7,7 +7,10 @@
   <script src="https://pixijs.download/release/pixi.min.js"></script>
 <body>
     <script type="text/javascript">
-        var app = new PIXI.Application(900, 900, { backgroundColor: 0x000 });
+        var maxWidth = window.innerWidth-30;
+        var maxHeight = window.innerHeight-30;
+
+        var app = new PIXI.Application(maxWidth, maxHeight, { backgroundColor: 0x000 });
         document.body.appendChild(app.view);
 
         var containerRoot = new PIXI.Container();
@@ -24,35 +27,35 @@
         var IsAlive =[true,true,true,true]
 
         var p1last = new PIXI.Sprite(p1texture);
-        p1last.x = 225;
-        p1last.y = 225;
-        p1last.scale.set(2);
+        p1last.x = StartPosition(100,maxWidth-100);
+        p1last.y = StartPosition(100,maxHeight-100);
+        p1last.scale.set(4);
         container.addChild(p1last);
-        var p1Direction = 3;
+        var p1Direction = StartPosition(0,7);
 
         
         var p2last = new PIXI.Sprite(p2texture);
-        p2last.x = 725;
-        p2last.y = 225;
-        p2last.scale.set(2);
+        p2last.x = StartPosition(100,maxWidth-100);
+        p2last.y = StartPosition(100,maxHeight-100);
+        p2last.scale.set(4);
         container.addChild(p2last);
-        var p2Direction = 5;
+        var p2Direction = StartPosition(0,7);
 
         
         var p3last = new PIXI.Sprite(p3texture);
-        p3last.x = 225;
-        p3last.y = 725;
-        p3last.scale.set(2);
+        p3last.x = StartPosition(100,maxWidth-100);
+        p3last.y = StartPosition(100,maxHeight-100);
+        p3last.scale.set(4);
         container.addChild(p3last);
-        var p3Direction = 1;
+        var p3Direction = StartPosition(0,7);
 
         
         var p4last = new PIXI.Sprite(p4texture);
-        p4last.x = 725;
-        p4last.y = 725;
-        p4last.scale.set(2);
+        p4last.x = StartPosition(100,maxWidth-100);
+        p4last.y = StartPosition(100,maxHeight-100);
+        p4last.scale.set(4);
         container.addChild(p4last);
-        var p4Direction = 7;
+        var p4Direction = StartPosition(0,7);
 
         //UPDATE Function
         var totalTime = 0;
@@ -122,9 +125,14 @@
                     }
                     alert(string);
                     app.stop();
+                    location.reload();
                 }
 
         });
+        
+        function StartPosition(min, max){
+            return Math.floor(Math.random() * (max - min)) + min;
+        }   
 
         function detectCollision(x,y,direction){
             for(var i = container.children.length -1; i >= 0; i--){
@@ -147,11 +155,11 @@
             var next = new PIXI.Sprite(texture);
             next.x = directionArray[direction][0] + sprite.x;
             next.y = directionArray[direction][1] + sprite.y;
-            if(next.x <0 || next.x >900 || next.y <0 || next.y > 900 || detectCollision(next.x, next.y, direction)){
+            if(next.x <0 || next.x >maxWidth || next.y <0 || next.y >maxHeight || detectCollision(next.x, next.y, direction)){
                 IsAlive = false;
                 return {next: next, IsAlive: IsAlive}
             }
-            next.scale.set(2);
+            next.scale.set(4);
             container.addChild(next);
             return {next: next, IsAlive: IsAlive}
         }
