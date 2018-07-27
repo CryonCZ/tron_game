@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Hello World</title>
+</head>
+  <script src="https://pixijs.download/release/pixi.min.js"></script>
+<body>
+  <script type="text/javascript">
+      var app = new PIXI.Application(800, 600, { backgroundColor: 0x1099bb });
+      document.body.appendChild(app.view);
+      
+      var texture = PIXI.Texture.fromImage('sw-flame-orange.png');
+
+      var score = 0;
+      var scoreText = new PIXI.Text("Score: 0", { fontFamily: "Arial", fontSize: 24, fill: 0x000000, align: "left"});
+
+      var containerRoot = new PIXI.Container();
+      app.stage.addChild(containerRoot);
+      var container = new PIXI.Container();
+      containerRoot.addChild(container);
+      containerRoot.addChild(scoreText);
+
+      var totalTime = 0;
+      app.ticker.add(function(deltaTime){
+        totalTime += deltaTime;
+        if(randomInt(0,100) < 20){
+          addDrop();
+        }
+
+        for(var i = container.children.length -1; i >= 0; i--){
+          var obj = container.children[i];
+          obj.x += obj.speedX * deltaTime;
+          obj.y += obj.speedY * deltaTime;
+          obj.rotation += obj.rotationSpeed * deltaTime;
+
+          if(obj.isSchrapnel){
+            obj.speedY += deltaTime *0.1;
+          }
+
+          if(obj.y > app.renderer.height - obj.height/2 || obj.explode){
+            if(obj.isDrop){
+              addSchrapnel(obj.x, obj.y);
+              addSchrapnel(obj.x, obj.y);
+              addSchrapnel(obj.x, obj.y);
+            }
+            container.removeChildAt(i);
+          }
+        }
+      });
+
+      function addDrop(){
+        var drop = new PIXI.Sprite(texture);
+
+        drop.x = randomInt(drop.width/2, app.renderer.width - drop.width/2);
+        drop.y = drop.height /2;
+        drop.anchor.set(0.5);
+
+        drop.speedX = 0;
+        drop.speedY = randomInt(1,5);
+        drop.rotationSpeed = randomInt(-5,5)*0.01;
+
+        drop.isDrop = true;
+        drop.interactive = true;
+
+        drop.on("pointerdown", function(e){
+          e.currentTarget.explode = true;
+          score++;
+          scoreText.text = "Score: " + score;
+        });
+
+        container.addChild(drop);
+      }
+
+      function addSchrapnel(x,y){
+        var drop = new PIXI.Sprite(texture);
+
+        drop.x = x;
+        drop.y = y;
+        drop.anchor.set(0.5);
+        drop.scale.set(randomInt(1, 5) / 10.0);
+
+        drop.speedX = randomInt(-5,5);
+        drop.speedY = -randomInt(3,7);
+        drop.rotationSpeed = randomInt(-5,5)*0.01;
+
+        drop.isSchrapnel = true;
+
+        container.addChild(drop);
+      }
+
+      function randomInt(min, max){
+        return Math.floor(Math.random() * (max - min)) + min;
+      }
+  </script>
+</body>
+</html>
