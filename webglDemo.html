@@ -69,6 +69,19 @@
         app.renderer.render(containerRoot, rt);
       });
 
+ window.addEventListener("keydown", function(e){
+        if(e.keyCode === 70){
+          if(poostProcessSprite.filters){
+            poostProcessSprite.filters = null;
+          }
+          else{
+            poostProcessSprite.filters = [filter];
+          }
+          e.preventDefault();
+        }
+      }, false);
+
+      
       function addDrop(){
         var drop = new PIXI.Sprite(texture);
 
