@@ -27,16 +27,22 @@
       var score = 0;
       var scoreText = new PIXI.Text("Score: 0", { fontFamily: "Arial", fontSize: 24, fill: 0x000000, align: "left"});
 
+      var graphics = new PIXI.Graphics();
+      graphics.beginFill(0x1099bb);
+      graphics.drawRect(0,0,800,600);
+
       var containerRoot = new PIXI.Container();
       app.stage.addChild(containerRoot);
       app.stage.addChild(poostProcessSprite);
       var container = new PIXI.Container();
+      containerRoot.addChild(graphics);
       containerRoot.addChild(container);
       containerRoot.addChild(scoreText);
 
       var totalTime = 0;
       app.ticker.add(function(deltaTime){
         totalTime += deltaTime;
+        filter.uniforms.time += deltaTime * 0.04;
         if(randomInt(0,100) < 20){
           addDrop();
         }

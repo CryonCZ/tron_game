@@ -194,8 +194,8 @@ void main(void)
 {
     gl_FragColor = vec4(fract(time));
 
-    gl_FragColor = GrayScale();
-    //gl_FragColor = Sepia();
+    //gl_FragColor = GrayScale();
+    gl_FragColor = Sepia();
     //gl_FragColor = Vignet();
     //gl_FragColor = Stripes();
     //gl_FragColor = Wiggle();
