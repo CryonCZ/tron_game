@@ -1,0 +1,207 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Hello World</title>
+</head>
+  <script src="https://pixijs.download/release/pixi.min.js"></script>
+<body>
+    <script type="text/javascript">
+        var app = new PIXI.Application(900, 900, { backgroundColor: 0x000 });
+        document.body.appendChild(app.view);
+
+        var containerRoot = new PIXI.Container();
+        app.stage.addChild(containerRoot);
+        var container = new PIXI.Container();
+        containerRoot.addChild(container);
+        
+        var directionArray = [[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1]];
+        var p1texture = PIXI.Texture.fromImage('player1.png');
+        var p2texture = PIXI.Texture.fromImage('player2.png');
+        var p3texture = PIXI.Texture.fromImage('player3.png');
+        var p4texture = PIXI.Texture.fromImage('player4.png');
+        
+        var IsAlive =[true,true,true,true]
+
+        var p1last = new PIXI.Sprite(p1texture);
+        p1last.x = 225;
+        p1last.y = 225;
+        p1last.scale.set(2);
+        container.addChild(p1last);
+        var p1Direction = 3;
+
+        
+        var p2last = new PIXI.Sprite(p2texture);
+        p2last.x = 725;
+        p2last.y = 225;
+        p2last.scale.set(2);
+        container.addChild(p2last);
+        var p2Direction = 5;
+
+        
+        var p3last = new PIXI.Sprite(p3texture);
+        p3last.x = 225;
+        p3last.y = 725;
+        p3last.scale.set(2);
+        container.addChild(p3last);
+        var p3Direction = 1;
+
+        
+        var p4last = new PIXI.Sprite(p4texture);
+        p4last.x = 725;
+        p4last.y = 725;
+        p4last.scale.set(2);
+        container.addChild(p4last);
+        var p4Direction = 7;
+
+        //UPDATE Function
+        var totalTime = 0;
+        app.ticker.add(function(deltaTime){
+            totalTime += deltaTime;
+            if(IsAlive[0]){
+                var p1next = addWorm(p1last, p1texture, p1Direction, IsAlive[0]);
+                p1last.x = p1next.next.x;
+                p1last.y = p1next.next.y;
+                IsAlive[0] = p1next.IsAlive;
+            }
+
+            if(IsAlive[1]){
+                var p2next = addWorm(p2last, p2texture, p2Direction, IsAlive[1]);
+                p2last.x = p2next.next.x;
+                p2last.y = p2next.next.y;
+                IsAlive[1] = p2next.IsAlive;
+            }
+
+            if(IsAlive[2]){
+                var p3next = addWorm(p3last, p3texture, p3Direction, IsAlive[2]);
+                p3last.x = p3next.next.x;
+                p3last.y = p3next.next.y;
+                IsAlive[2] = p3next.IsAlive;
+            }
+
+            if(IsAlive[3]){
+                var p4next = addWorm(p4last, p4texture, p4Direction, IsAlive[3]);
+                p4last.x = p4next.next.x;
+                p4last.y = p4next.next.y;
+                IsAlive[3] = p4next.IsAlive;
+            }
+
+                var aliveCount =0;
+                var winner;
+                for (let i = 0; i < IsAlive.length; i++) {
+                    if(IsAlive[i]) {
+                        aliveCount++;
+                        winner =i;
+                    }               
+                }
+
+
+                if(aliveCount==0)
+                {
+                    
+
+                    alert("Draw, Prohrali jste vsichni!");
+                    app.stop();
+                
+                }
+                if(aliveCount == 1){
+                    var string = "Vyhral ";
+                    switch(winner){
+                        case 0:
+                        string +="cerveny hrac";
+                            break;
+                        case 1:
+                        string +="modry hrac";
+                            break;
+                        case 2:
+                        string +="zluty hrac";
+                            break;
+                        case 3:
+                        string +="zeleny hrac";
+                            break;
+                    }
+                    alert(string);
+                    app.stop();
+                }
+
+        });
+
+        function detectCollision(x,y,direction){
+            for(var i = container.children.length -1; i >= 0; i--){
+                var obj = container.children[i];
+                if (obj.x == x && obj.y == y){
+                    return true;
+                }
+                if(direction%2==1){
+                    if (obj.x == x+1 && obj.y == y){
+                        return true;
+                    }
+                    if (obj.x == x && obj.y == y+1){
+                        return true;
+                    }
+                }
+            }
+        }
+
+        function addWorm(sprite, texture, direction, IsAlive){
+            var next = new PIXI.Sprite(texture);
+            next.x = directionArray[direction][0] + sprite.x;
+            next.y = directionArray[direction][1] + sprite.y;
+            if(next.x <0 || next.x >900 || next.y <0 || next.y > 900 || detectCollision(next.x, next.y, direction)){
+                IsAlive = false;
+                return {next: next, IsAlive: IsAlive}
+            }
+            next.scale.set(2);
+            container.addChild(next);
+            return {next: next, IsAlive: IsAlive}
+        }
+        
+        window.addEventListener("keydown", function(e){
+            if(e.keyCode === 81){
+                p1Direction = (p1Direction - 1)%8;
+                if(p1Direction == -1)
+                    p1Direction = 7;
+                e.preventDefault();
+            }
+            if(e.keyCode === 87){
+                p1Direction = (p1Direction + 1)%8;
+                e.preventDefault();
+            }
+            
+            if(e.keyCode === 78){
+                p2Direction = (p2Direction - 1)%8;
+                if(p2Direction == -1)
+                    p2Direction = 7;
+                e.preventDefault();
+            }
+            if(e.keyCode === 77){
+                p2Direction = (p2Direction + 1)%8;
+                e.preventDefault();
+            }
+
+            if(e.keyCode === 88){
+                p3Direction = (p3Direction - 1)%8;
+                if(p3Direction == -1)
+                    p3Direction = 7;
+                e.preventDefault();
+            }
+            if(e.keyCode === 67){
+                p3Direction = (p3Direction + 1)%8;
+                e.preventDefault();
+            }
+            
+            if(e.keyCode === 79){
+                p4Direction = (p4Direction - 1)%8;
+                if(p4Direction == -1)
+                    p4Direction = 7;
+                e.preventDefault();
+            }
+            if(e.keyCode === 80){
+                p4Direction = (p4Direction + 1)%8;
+                e.preventDefault();
+            }
+            
+        }, false);
+    </script>
+</body>
+</html>
